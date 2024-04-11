@@ -1,0 +1,120 @@
+openapi: 3.0.1
+info:
+    title: PP-ChatOCR
+    description: 提取图像中文字，并进行多轮问答，同时可以将表格图像转换成可编辑状态
+    version: "v1"
+servers:
+    - url: http://127.0.0.1:8080
+paths:
+    /get_text_ocr:
+        post:
+            operationId: GetTextOCR
+            summary: 对于一个只包含图像地址的字符串，提取图像中的文字
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/GetTextOCRRequest"
+            responses:
+                "200":
+                    description: 图像中文字识别的结果
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GetTextOCRResponse"
+
+    /get_kie:
+        post:
+            operationId: GetKIE
+            summary: 抽取字符串中的关键信息
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/GetKIERequest"
+            responses:
+                "200":
+                    description: 抽取关键信息的结果
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GetKIEResponse"
+            x-history:
+                description: 标记在requestBody中mediaType对应的content中用name所标记的字段接收一言交互历史的字段，其内容格式是[{"role":"","content":""},{"role":"","content":""},...] 
+                mediaType: application/json
+                name: "yiyan_info"
+                type: string
+
+    /get_table_ocr:
+        post:
+            operationId: GetTableOCR
+            summary: 对一张图像进行表格结构化展示
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/GetTableOCRRequest"
+            responses:
+                "200":
+                    description: 表格结构化展示结果
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/GetTableOCRResponse"
+            x-history:
+                description: 标记在requestBody中mediaType对应的content中用name所标记的字段接收一言交互历史的字段，其内容格式是[{"role":"","content":""},{"role":"","content":""},...] 
+                mediaType: application/json
+                name: "yiyan_info"
+                type: string
+
+components:
+    schemas:
+        GetTextOCRRequest:
+            type: object
+            required: [url]
+            properties:
+                url:
+                    type: string
+                    description: 只包含图像url地址的字符串，图像地址用<url><\url>包含                  
+        GetTextOCRResponse:
+            type: object
+            required: [results]
+            properties:
+                results:
+                    type: string
+                    description: OCR结果
+        GetKIERequest:
+            type: object
+            required: [keys]
+            properties:
+                keys:
+                    type: string
+                    description: 待抽取的关键信息字段，用[]包含或【】包含
+                yiyan_info:
+                    type: string
+                    description: 历史信息                                         
+        GetKIEResponse:
+            type: object
+            required: [results]
+            properties:
+                results:
+                    type: string
+                    description: 抽取的关键信息的结果
+        GetTableOCRRequest:
+            type: object
+            required: []
+            properties:
+                yiyan_info:
+                    type: string
+                    description: 历史信息 
+        GetTableOCRResponse:
+            type: object
+            required: [results]
+            properties:
+                results:
+                    type: string
+                    description: html形式的表格
+
