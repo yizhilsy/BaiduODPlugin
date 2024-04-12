@@ -1,0 +1,60 @@
+version: 0.0.1
+examples:
+      - context: # 对话历史
+          - role: user
+            content: <url>https://yiyan.baidu.com/<\url>
+          - role: bot
+            # 触发插件
+            plugin:
+              # 应当触发的接口operationId
+              operationId: GetTextOCR
+              # 思考过程，对触发有帮助
+              thoughts: 输入了一张图像，提取图像的文字信息
+              requestArguments: 
+                url: https://yiyan.baidu.com/
+          - role: user
+            content: '抽取信息[始发站、终点站、车次和票价]'
+          - role: bot
+            # 触发插件
+            plugin:
+              # 应当触发的接口operationId
+              operationId: GetKIE
+              # 思考过程，对触发有帮助
+              thoughts: 获取关键信息字段
+              requestArguments: 
+                keys: 始发站、终点站、车次和票价
+          - role: user
+            content: <url>https://yiyan.baidu.com/<\url>，将图像进行表格可视化
+          - role: bot
+            # 触发插件
+            plugin:
+              # 应当触发的接口operationId
+              operationId: GetTableOCR
+              # 思考过程，对触发有帮助
+              thoughts: 将图像进行表格可视化
+              requestArguments: 
+                url: https://yiyan.baidu.com/
+          # chatMedical
+          - role: user
+            content: 我最近感冒，发烧，胃疼，肝疼，得流感了，我该如何治疗自己？我该如何调理自己？我该吃什么药？
+          - role: bot
+            # 触发插件
+            plugin:
+              # 应当触发的接口operationId
+              operationId: AskDoctor
+              # 思考过程，对触发有帮助
+              thoughts: 上网搜索相应病情的治疗方法，并根据我的专业知识去回答这个病情的治疗方法
+              requestArguments:
+#                url: https://yiyan.baidu.com/
+                description: 感冒，发烧，胃疼，肝疼，肾虚，头疼，经期
+
+
+      # 反例，无需触发此插件的任一某个接口
+      - context:
+          - role: user
+            content: 请提取图像摘要
+          - role: bot
+            # 无需触发
+            plugin:  
+              thoughts: 我不需要使用以上工具
+
